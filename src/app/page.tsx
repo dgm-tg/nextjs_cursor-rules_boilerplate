@@ -1,103 +1,222 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import PageBuilder from './components/PageBuilder';
+import Preview from './components/Preview';
+import ExportPanel from './components/ExportPanel';
+
+export interface FormField {
+  id: string;
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'file';
+  label: string;
+  placeholder?: string;
+  required: boolean;
+  options?: string[]; // For select, radio, checkbox
+}
+
+export interface FormSection {
+  id: string;
+  title: string;
+  content: string;
+  type: 'form';
+  formFields: FormField[];
+  recipientEmail: string;
+  submitButtonText: string;
+  successMessage: string;
+}
+
+export interface RegularSection {
+  id: string;
+  title: string;
+  content: string;
+  type: 'text';
+}
+
+export interface PageData {
+  title: string;
+  subtitle: string;
+  heroTitle: string;
+  heroDescription: string;
+  heroButtonText: string;
+  heroButtonUrl: string;
+  sections: (RegularSection | FormSection)[];
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    text: string;
+  };
+  fonts: {
+    heading: string;
+    body: string;
+  };
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [pageData, setPageData] = useState<PageData>({
+    title: 'My Landing Page',
+    subtitle: 'Generated with Single Page Generator',
+    heroTitle: 'Welcome to Your Landing Page',
+    heroDescription: 'Create beautiful, responsive landing pages in minutes',
+    heroButtonText: 'Get Started',
+    heroButtonUrl: '#contact',
+    sections: [
+      {
+        id: '1',
+        title: 'About',
+        content: 'Tell your story here. Describe what makes your product or service unique.',
+        type: 'text'
+      }
+    ],
+    colors: {
+      primary: '#3b82f6',
+      secondary: '#1e40af',
+      background: '#ffffff',
+      text: '#1f2937'
+    },
+    fonts: {
+      heading: 'Inter',
+      body: 'Inter'
+    }
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [activeTab, setActiveTab] = useState<'builder' | 'preview' | 'export'>('builder');
+  const [showRestoreNotification, setShowRestoreNotification] = useState(false);
+
+  // Check for autosaved data on component mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('pageBuilder-autosave');
+    if (savedData && savedData !== 'null') {
+      try {
+        const parsedData = JSON.parse(savedData);
+        // Check if there's meaningful saved data (not just the default structure)
+        if (parsedData.title && (parsedData.title !== 'My Landing Page' || parsedData.sections.length > 3)) {
+          setShowRestoreNotification(true);
+        }
+      } catch (error) {
+        console.warn('Failed to parse autosaved data:', error);
+        localStorage.removeItem('pageBuilder-autosave');
+      }
+    }
+  }, []); // Only run once on mount
+
+  const restoreAutosavedData = () => {
+    const savedData = localStorage.getItem('pageBuilder-autosave');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setPageData(parsedData);
+        setShowRestoreNotification(false);
+      } catch (error) {
+        console.error('Failed to restore data:', error);
+        alert('Failed to restore autosaved data. Starting fresh.');
+        localStorage.removeItem('pageBuilder-autosave');
+        setShowRestoreNotification(false);
+      }
+    }
+  };
+
+  const dismissRestoreNotification = () => {
+    setShowRestoreNotification(false);
+    localStorage.removeItem('pageBuilder-autosave');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Restore Notification */}
+      {showRestoreNotification && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-lg max-w-md">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                💾
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-blue-800">
+                Autosaved work found
+              </h3>
+              <p className="text-sm text-blue-600 mt-1">
+                We found some unsaved work from your previous session. Would you like to restore it?
+              </p>
+              <div className="mt-3 flex space-x-2">
+                <button
+                  onClick={restoreAutosavedData}
+                  className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700"
+                >
+                  Restore
+                </button>
+                <button
+                  onClick={dismissRestoreNotification}
+                  className="bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded hover:bg-gray-400"
+                >
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={dismissRestoreNotification}
+              className="flex-shrink-0 text-blue-400 hover:text-blue-600"
+            >
+              ×
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h1 className="text-2xl font-bold text-gray-900">Single Page Generator</h1>
+            <nav className="flex space-x-4">
+              <button
+                onClick={() => setActiveTab('builder')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  activeTab === 'builder'
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Builder
+              </button>
+              <button
+                onClick={() => setActiveTab('preview')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  activeTab === 'preview'
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Preview
+              </button>
+              <button
+                onClick={() => setActiveTab('export')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  activeTab === 'export'
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Export
+              </button>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'builder' && (
+          <PageBuilder pageData={pageData} setPageData={setPageData} />
+        )}
+        {activeTab === 'preview' && (
+          <Preview pageData={pageData} />
+        )}
+        {activeTab === 'export' && (
+          <ExportPanel pageData={pageData} />
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

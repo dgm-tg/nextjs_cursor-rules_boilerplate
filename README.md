@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Single Page Generator
+
+A powerful web application that allows you to create beautiful, responsive landing pages in minutes. Built with Next.js and Tailwind CSS.
+
+## Features
+
+- **Visual Page Builder**: Drag-and-drop interface to customize your landing page
+- **Live Preview**: See changes in real-time as you build
+- **Mobile Offcanvas Menu**: Responsive navigation with sliding mobile menu
+- **Export Options**: Download as ZIP file with HTML, CSS, JS, and documentation
+- **Vercel Integration**: One-click deployment to Vercel (with proper setup)
 
 ## Getting Started
 
@@ -17,6 +27,39 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+## Vercel Deployment Setup (Optional)
+
+To enable one-click deployment to Vercel from within the app, you need to set up a Vercel API token:
+
+### 1. Get Your Vercel API Token
+
+1. Go to [Vercel Account Settings](https://vercel.com/account/tokens)
+2. Click "Create Token"
+3. Give it a name (e.g., "Single Page Generator")
+4. Copy the generated token
+
+### 2. Set Up Environment Variable
+
+1. Create a `.env.local` file in your project root
+2. Add your token:
+   ```
+   VERCEL_TOKEN=your_actual_token_here
+   ```
+3. Keep this file secure and never commit it to version control
+
+### 3. Deploy Your App
+
+1. Deploy this Single Page Generator app to Vercel first
+2. Now users can create landing pages and deploy them instantly!
+
+**Note**: If you don't set up the token, the app will still work perfectly - it will just show manual deployment instructions instead of automatic deployment.
+
+## How to Use
+
+1. **Builder Tab**: Customize your landing page content, colors, and fonts
+2. **Preview Tab**: See how your page looks with the mobile offcanvas menu
+3. **Export Tab**: Download as ZIP or deploy to Vercel
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
