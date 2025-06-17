@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Single Page Generator",
-  description: "Create beautiful, responsive landing pages in minutes with our drag-and-drop page builder. Export as ZIP or deploy to Vercel instantly.",
+  description: "Create beautiful, responsive landing pages in minutes with our drag-and-drop page builder. Export as ZIP with complete documentation.",
 };
 
 export default function RootLayout({

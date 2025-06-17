@@ -831,68 +831,10 @@ export const generateHTML = (pageData: PageData) => {
 export const generateReadme = (pageData: PageData) => {
   return `# ${pageData.title} - Landing Page
 
-## Quick Start
+## Setup Instructions
 
-1. Open \`index.html\` in your browser to view your landing page
-2. All styles are in \`styles.css\`
-3. All JavaScript functionality is in \`script.js\`
-
-## Email Configuration (Important!)
-
-Your landing page includes contact forms that can send emails using EmailJS. To enable email functionality:
-
-### Step 1: Sign Up for EmailJS
-1. Go to [https://www.emailjs.com/](https://www.emailjs.com/)
-2. Create a free account (100 emails/month free)
-
-### Step 2: Set Up Your Email Service
-1. In your EmailJS dashboard, go to **Email Services**
-2. Click **Add New Service**
-3. Choose your email provider (Gmail, Outlook, etc.)
-4. Follow the setup instructions for your email provider
-5. Copy your **Service ID**
-
-### Step 3: Create an Email Template
-1. Go to **Email Templates** in your dashboard
-2. Click **Create New Template**
-3. Use this template content:
-
-\`\`\`
-Subject: New Contact from {{from_name}}
-
-Hello {{to_name}},
-
-You have received a new message from your website:
-
-From: {{from_name}}
-Email: {{from_email}}
-Message: {{message}}
-
-Best regards,
-Your Website
-\`\`\`
-
-4. Save the template and copy your **Template ID**
-
-### Step 4: Get Your Public Key
-1. Go to **Integration** in your dashboard
-2. Copy your **Public Key**
-
-### Step 5: Configure Your Website
-1. Open \`index.html\` in a text editor
-2. Find the EmailJS configuration section (around line 15)
-3. Replace the placeholder values:
-
-\`\`\`javascript
-const EMAILJS_CONFIG = {
-    publicKey: 'YOUR_PUBLIC_KEY_HERE',    // Replace with your public key
-    serviceId: 'YOUR_SERVICE_ID_HERE',    // Replace with your service ID
-    templateId: 'YOUR_TEMPLATE_ID_HERE'   // Replace with your template ID
-};
-\`\`\`
-
-### Step 6: Test Your Forms
-1. Save the \`index.html\` file
+### Quick Start
+1. Extract the ZIP file
 2. Open it in your browser
 3. Fill out and submit a contact form
 4. Check your email for the message
@@ -924,7 +866,6 @@ You can deploy your landing page to any web hosting service:
 
 ### Free Options:
 - **Netlify**: Drag and drop your files
-- **Vercel**: Upload your project folder
 - **GitHub Pages**: Push to a GitHub repository
 
 ### Paid Options:

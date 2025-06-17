@@ -8,7 +8,6 @@ A powerful web application that allows you to create beautiful, responsive landi
 - **Live Preview**: See changes in real-time as you build
 - **Mobile Offcanvas Menu**: Responsive navigation with sliding mobile menu
 - **Export Options**: Download as ZIP file with HTML, CSS, JS, and documentation
-- **Vercel Integration**: One-click deployment to Vercel (with proper setup)
 
 ## Getting Started
 
@@ -28,38 +27,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Vercel Deployment Setup (Optional)
-
-To enable one-click deployment to Vercel from within the app, you need to set up a Vercel API token:
-
-### 1. Get Your Vercel API Token
-
-1. Go to [Vercel Account Settings](https://vercel.com/account/tokens)
-2. Click "Create Token"
-3. Give it a name (e.g., "Single Page Generator")
-4. Copy the generated token
-
-### 2. Set Up Environment Variable
-
-1. Create a `.env.local` file in your project root
-2. Add your token:
-   ```
-   VERCEL_TOKEN=your_actual_token_here
-   ```
-3. Keep this file secure and never commit it to version control
-
-### 3. Deploy Your App
-
-1. Deploy this Single Page Generator app to Vercel first
-2. Now users can create landing pages and deploy them instantly!
-
-**Note**: If you don't set up the token, the app will still work perfectly - it will just show manual deployment instructions instead of automatic deployment.
-
 ## How to Use
 
 1. **Builder Tab**: Customize your landing page content, colors, and fonts
 2. **Preview Tab**: See how your page looks with the mobile offcanvas menu
-3. **Export Tab**: Download as ZIP or deploy to Vercel
+3. **Export Tab**: Download as ZIP with complete documentation
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
@@ -72,11 +44,18 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deploy on Your Preferred Platform
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You can deploy your Next.js app to any hosting platform that supports Node.js applications. Some popular options include:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Netlify**
+- **DigitalOcean**
+- **AWS**
+- **Google Cloud Platform**
+- **Microsoft Azure**
+- **Heroku**
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-documentation/deploying) for more details.
 
 ## Workflow: From Idea to Implemented Feature 💡➡️💻
 
