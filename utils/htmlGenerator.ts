@@ -156,6 +156,20 @@ nav h1 {
 .hero { 
   text-align: center; 
   padding: 5rem 0; 
+  position: relative;
+  background-size: ${pageData.heroBackgroundSize || 'cover'};
+  background-position: ${pageData.heroBackgroundPosition || 'center'};
+  background-attachment: ${pageData.heroBackgroundAttachment || 'scroll'};
+  background-repeat: no-repeat;
+}
+
+.hero.has-background {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+}
+
+.hero .hero-content {
+  position: relative;
+  z-index: 2;
 }
 
 .hero h2 { 
@@ -166,6 +180,11 @@ nav h1 {
   color: ${pageData.colors.text}; 
 }
 
+.hero.has-background h2 {
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
 .hero p { 
   font-size: 1.25rem; 
   margin-bottom: 2rem; 
@@ -173,6 +192,11 @@ nav h1 {
   margin-left: auto; 
   margin-right: auto; 
   color: ${pageData.colors.text}; 
+}
+
+.hero.has-background p {
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .btn, .cta-button { 
@@ -742,11 +766,13 @@ export const generateHTML = (pageData: PageData) => {
     </div>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero${pageData.heroBackgroundImage ? ' has-background' : ''}"${pageData.heroBackgroundImage ? ` style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${pageData.heroBackgroundImage}); background-position: ${pageData.heroBackgroundPosition || 'center'}; background-attachment: ${pageData.heroBackgroundAttachment || 'scroll'}; background-size: ${pageData.heroBackgroundSize || 'cover'};"` : ''}>
         <div class="container">
-            <h2>${pageData.heroTitle}</h2>
-            <p>${pageData.heroDescription}</p>
-            <a href="${pageData.heroButtonUrl}" class="cta-button">${pageData.heroButtonText}</a>
+            <div class="hero-content">
+                <h2>${pageData.heroTitle}</h2>
+                <p>${pageData.heroDescription}</p>
+                <a href="${pageData.heroButtonUrl}" class="cta-button">${pageData.heroButtonText}</a>
+            </div>
         </div>
     </section>
 

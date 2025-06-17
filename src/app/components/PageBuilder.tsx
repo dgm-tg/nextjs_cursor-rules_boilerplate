@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PageData, FormField, FormSection, RegularSection } from '../page';
 
 interface PageBuilderProps {
@@ -11,6 +11,7 @@ interface PageBuilderProps {
 export default function PageBuilder({ pageData, setPageData }: PageBuilderProps) {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const hasMountedRef = useRef(false);
 
   // Save pageData to localStorage whenever it changes
   useEffect(() => {
@@ -30,19 +31,19 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
 
   // Load saved pageData on component mount
   useEffect(() => {
+    if (hasMountedRef.current) return; // Only run once
+    hasMountedRef.current = true;
+    
     const savedData = localStorage.getItem('pageBuilder-autosave');
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        // Only load if it's different from current data to avoid infinite loops
-        if (JSON.stringify(parsedData) !== JSON.stringify(pageData)) {
-          setPageData(parsedData);
-        }
+        setPageData(parsedData);
       } catch (error) {
         console.warn('Failed to load autosaved data:', error);
       }
     }
-  }, []); // Only run on mount
+  }, [setPageData]);
 
   const updatePageData = (field: keyof PageData, value: string) => {
     setPageData({ ...pageData, [field]: value });
@@ -178,7 +179,7 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
         <div className="bg-white rounded-lg shadow p-6">
           
           {/* Autosave Status */}
-          <div className="mb-4 flex justify-between items-center">
+          <div className="mb-4 flex justify-between items-center bg-gray-100 p-4 rounded-lg">
             <div className="text-sm flex items-center gap-2">
               {saveStatus === 'saved' && <span className="text-green-600">✅ Your work is automatically saved</span>}
               {saveStatus === 'saving' && <span className="text-blue-600">💾 Saving...</span>}
@@ -249,6 +250,125 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Background Image
+                </label>
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const result = event.target?.result as string;
+                          updatePageData('heroBackgroundImage', result);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  
+                  {pageData.heroBackgroundImage && (
+                    <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={pageData.heroBackgroundImage}
+                        alt="Hero background preview"
+                        className="w-full h-32 object-cover rounded-md border"
+                      />
+                      <button
+                        onClick={() => updatePageData('heroBackgroundImage', '')}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                        title="Remove background image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+                  
+                  <input
+                    type="url"
+                    placeholder="Or enter image URL..."
+                    value={pageData.heroBackgroundImage && !pageData.heroBackgroundImage.startsWith('data:') ? pageData.heroBackgroundImage : ''}
+                    onChange={(e) => updatePageData('heroBackgroundImage', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  
+                  <p className="text-xs text-gray-500">
+                    Upload an image file or enter an image URL. Recommended size: 1920x1080px or larger.
+                  </p>
+                </div>
+
+                {/* Background Image Settings */}
+                {pageData.heroBackgroundImage && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mt-5 mb-2">
+                      Background Settings
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Position
+                        </label>
+                        <select
+                          value={pageData.heroBackgroundPosition || 'center'}
+                          onChange={(e) => updatePageData('heroBackgroundPosition', e.target.value)}
+                          className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="center">Center</option>
+                          <option value="top">Top</option>
+                          <option value="bottom">Bottom</option>
+                          <option value="left">Left</option>
+                          <option value="right">Right</option>
+                          <option value="top left">Top Left</option>
+                          <option value="top right">Top Right</option>
+                          <option value="bottom left">Bottom Left</option>
+                          <option value="bottom right">Bottom Right</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Size
+                        </label>
+                        <select
+                          value={pageData.heroBackgroundSize || 'cover'}
+                          onChange={(e) => updatePageData('heroBackgroundSize', e.target.value)}
+                          className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="cover">Cover</option>
+                          <option value="contain">Contain</option>
+                          <option value="auto">Auto</option>
+                          <option value="100% 100%">Stretch</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Attachment
+                        </label>
+                        <select
+                          value={pageData.heroBackgroundAttachment || 'scroll'}
+                          onChange={(e) => updatePageData('heroBackgroundAttachment', e.target.value)}
+                          className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="scroll">Scroll</option>
+                          <option value="fixed">Fixed</option>
+                          <option value="local">Local</option>
+                        </select>
+                      </div>
+                    </div>
+                                                              <p className="text-xs text-gray-500 mt-2">
+                       Adjust how your background image is positioned, sized, and behaves when scrolling.
+                     </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -488,7 +608,7 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
                                       value={(field.options || []).join('\n')}
                                       onChange={(e) => updateFormField(section.id, field.id, 'options', e.target.value.split('\n').filter(opt => opt.trim()))}
                                       rows={3}
-                                      placeholder="Option 1&#10;Option 2&#10;Option 3"
+                                      placeholder="Enter each option on a new line"
                                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                   </div>
@@ -498,7 +618,7 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
                             
                             {(section as FormSection).formFields.length === 0 && (
                               <div className="text-center py-8 text-gray-500">
-                                No form fields yet. Click "Add Field" to get started.
+                                No form fields yet. Click &quot;Add Field&quot; to get started.
                               </div>
                             )}
                           </div>

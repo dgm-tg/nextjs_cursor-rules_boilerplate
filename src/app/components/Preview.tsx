@@ -398,14 +398,33 @@ export default function Preview({ pageData }: PreviewProps) {
           </nav>
 
           {/* Hero Section */}
-          <section className="py-20 px-4 text-center">
-            <div className="max-w-4xl mx-auto">
+          <section 
+            className="py-20 px-4 text-center relative bg-cover bg-center bg-no-repeat"
+            style={{ 
+              backgroundColor: pageData.colors.background,
+              ...(pageData.heroBackgroundImage && {
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${pageData.heroBackgroundImage})`,
+                backgroundPosition: pageData.heroBackgroundPosition || 'center',
+                backgroundAttachment: pageData.heroBackgroundAttachment || 'scroll',
+                backgroundSize: pageData.heroBackgroundSize || 'cover',
+                color: 'white'
+              })
+            }}
+          >
+            <div className="max-w-4xl mx-auto relative z-10">
               <h2 className="text-4xl md:text-6xl font-bold mb-6"
-                  style={{ color: pageData.colors.text, fontFamily: pageData.fonts.heading }}>
+                  style={{ 
+                    color: pageData.heroBackgroundImage ? 'white' : pageData.colors.text, 
+                    fontFamily: pageData.fonts.heading,
+                    textShadow: pageData.heroBackgroundImage ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none'
+                  }}>
                 {pageData.heroTitle}
               </h2>
               <p className="text-xl mb-8 max-w-2xl mx-auto"
-                 style={{ color: pageData.colors.text }}>
+                 style={{ 
+                   color: pageData.heroBackgroundImage ? 'white' : pageData.colors.text,
+                   textShadow: pageData.heroBackgroundImage ? '1px 1px 2px rgba(0,0,0,0.5)' : 'none'
+                 }}>
                 {pageData.heroDescription}
               </p>
               <a

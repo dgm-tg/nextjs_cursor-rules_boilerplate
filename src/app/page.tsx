@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PageBuilder from './components/PageBuilder';
 import Preview from './components/Preview';
 import ExportPanel from './components/ExportPanel';
@@ -39,6 +39,10 @@ export interface PageData {
   heroDescription: string;
   heroButtonText: string;
   heroButtonUrl: string;
+  heroBackgroundImage?: string;
+  heroBackgroundPosition?: string;
+  heroBackgroundAttachment?: string;
+  heroBackgroundSize?: string;
   sections: (RegularSection | FormSection)[];
   colors: {
     primary: string;
@@ -60,6 +64,9 @@ export default function Home() {
     heroDescription: 'Create beautiful, responsive landing pages in minutes',
     heroButtonText: 'Get Started',
     heroButtonUrl: '#contact',
+    heroBackgroundPosition: 'center',
+    heroBackgroundAttachment: 'scroll',
+    heroBackgroundSize: 'cover',
     sections: [
       {
         id: '1',
@@ -83,6 +90,11 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'builder' | 'preview' | 'export'>('builder');
   const [showRestoreNotification, setShowRestoreNotification] = useState(false);
 
+  // Wrap setPageData in useCallback to prevent unnecessary re-renders
+  const stableSetPageData = useCallback((data: PageData) => {
+    setPageData(data);
+  }, []);
+
   // Check for autosaved data on component mount
   useEffect(() => {
     const savedData = localStorage.getItem('pageBuilder-autosave');
@@ -105,7 +117,7 @@ export default function Home() {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        setPageData(parsedData);
+        stableSetPageData(parsedData);
         setShowRestoreNotification(false);
       } catch (error) {
         console.error('Failed to restore data:', error);
@@ -208,7 +220,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'builder' && (
-          <PageBuilder pageData={pageData} setPageData={setPageData} />
+          <PageBuilder pageData={pageData} setPageData={stableSetPageData} />
         )}
         {activeTab === 'preview' && (
           <Preview pageData={pageData} />
