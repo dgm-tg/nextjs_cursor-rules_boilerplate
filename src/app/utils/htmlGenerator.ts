@@ -335,6 +335,11 @@ footer p {
   .container { 
     padding: 0 15px; 
   }
+
+  /* Mobile scroll margin to prevent navbar obstruction */
+  section {
+    scroll-margin-top: var(--navbar-height, 100px);
+  }
 }
 
 @media (max-width: 480px) { 
@@ -365,6 +370,25 @@ document.addEventListener('DOMContentLoaded', function() {
   const mobileMenu = document.querySelector('.mobile-menu');
   const mobileMenuBackdrop = document.querySelector('.mobile-menu-backdrop');
   const mobileMenuClose = document.querySelector('.mobile-menu-close');
+
+  // Dynamically set scroll margin based on navbar height for mobile
+  function updateScrollMargin() {
+    // Only apply on mobile screens
+    if (window.innerWidth <= 768) {
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        const navbarHeight = navbar.offsetHeight;
+        document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
+      }
+    } else {
+      // Remove the CSS variable on desktop
+      document.documentElement.style.removeProperty('--navbar-height');
+    }
+  }
+
+  // Calculate on load and when window resizes
+  updateScrollMargin();
+  window.addEventListener('resize', updateScrollMargin);
 
   function openMobileMenu() {
     mobileMenu.classList.add('active');

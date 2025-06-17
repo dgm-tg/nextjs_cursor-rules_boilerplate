@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Mobile-only scroll margin for navbar spacing */
+@media (max-width: 768px) {
+  .mobile-scroll-margin {
+    scroll-margin-top: var(--navbar-height, 100px);
+  }
+}

@@ -11,6 +11,32 @@ interface PreviewProps {
 export default function Preview({ pageData }: PreviewProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Dynamically set scroll margin based on navbar height for mobile
+  useEffect(() => {
+    const updateScrollMargin = () => {
+      // Only apply on mobile screens
+      if (window.innerWidth <= 768) {
+        const navbar = document.querySelector('nav');
+        if (navbar) {
+          const navbarHeight = navbar.offsetHeight;
+          document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
+        }
+      } else {
+        // Remove the CSS variable on desktop
+        document.documentElement.style.removeProperty('--navbar-height');
+      }
+    };
+
+    // Calculate on mount and when window resizes
+    updateScrollMargin();
+    window.addEventListener('resize', updateScrollMargin);
+
+    return () => {
+      window.removeEventListener('resize', updateScrollMargin);
+      document.documentElement.style.removeProperty('--navbar-height');
+    };
+  }, [pageData]); // Recalculate when pageData changes (might affect navbar height)
+
   // Load Google Fonts dynamically when font selections change
   useEffect(() => {
     // Remove existing font links to avoid duplicates
@@ -442,7 +468,7 @@ export default function Preview({ pageData }: PreviewProps) {
             <section
               key={section.id}
               id={`section-${section.id}`}
-              className="py-16 px-4"
+              className="py-16 px-4 mobile-scroll-margin"
             >
               <div className="max-w-6xl mx-auto">
                 <h2 className="text-3xl font-bold text-center mb-12"
