@@ -69,7 +69,7 @@ export default function Home() {
     heroBackgroundSize: 'cover',
     sections: [
       {
-        id: '1',
+        id: 'about',
         title: 'About',
         content: 'Tell your story here. Describe what makes your product or service unique.',
         type: 'text'

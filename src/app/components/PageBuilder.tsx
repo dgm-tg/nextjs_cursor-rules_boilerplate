@@ -106,8 +106,20 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
   };
 
   const addSection = () => {
+    // Generate a more user-friendly default ID
+    const sectionNumber = pageData.sections.length + 1;
+    const baseId = `section-${sectionNumber}`;
+    
+    // Ensure the ID is unique
+    let uniqueId = baseId;
+    let counter = 1;
+    while (pageData.sections.some(s => s.id === uniqueId)) {
+      uniqueId = `${baseId}-${counter}`;
+      counter++;
+    }
+    
     const newSection: RegularSection = {
-      id: Date.now().toString(),
+      id: uniqueId,
       title: 'New Section',
       content: 'Add your content here...',
       type: 'text'
@@ -409,6 +421,58 @@ export default function PageBuilder({ pageData, setPageData }: PageBuilderProps)
                         onChange={(e) => updateSection(section.id, 'title', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Section ID
+                        <span className="text-xs text-gray-500 ml-2">(used for anchor links and navigation)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={section.id}
+                        onChange={(e) => {
+                          const newId = e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''); // Only allow alphanumeric, hyphens, and underscores
+                          if (newId && !pageData.sections.some(s => s.id === newId && s.id !== section.id)) {
+                            // Update the section ID if it's unique
+                            const updatedSections = pageData.sections.map(s =>
+                              s.id === section.id ? { ...s, id: newId } : s
+                            );
+                            setPageData({ ...pageData, sections: updatedSections });
+                          } else if (newId === '') {
+                            // Allow clearing the field but don't update until a valid ID is entered
+                            const updatedSections = pageData.sections.map(s =>
+                              s.id === section.id ? { ...s, id: newId } : s
+                            );
+                            setPageData({ ...pageData, sections: updatedSections });
+                          }
+                        }}
+                        onBlur={(e) => {
+                          // If the field is empty on blur, generate a new default ID
+                          if (!e.target.value.trim()) {
+                            const newId = `section-${Date.now()}`;
+                            const updatedSections = pageData.sections.map(s =>
+                              s.id === section.id ? { ...s, id: newId } : s
+                            );
+                            setPageData({ ...pageData, sections: updatedSections });
+                          }
+                        }}
+                        placeholder="section-id"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          !section.id || pageData.sections.filter(s => s.id === section.id).length > 1
+                            ? 'border-red-300 bg-red-50'
+                            : 'border-gray-300'
+                        }`}
+                      />
+                      {!section.id && (
+                        <p className="text-xs text-red-500 mt-1">Section ID is required</p>
+                      )}
+                      {section.id && pageData.sections.filter(s => s.id === section.id).length > 1 && (
+                        <p className="text-xs text-red-500 mt-1">Section ID must be unique</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">
+                        Only letters, numbers, hyphens, and underscores allowed. Used for #section-{section.id} links.
+                      </p>
                     </div>
 
                     <div>
