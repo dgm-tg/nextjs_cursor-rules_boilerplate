@@ -1,110 +1,248 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Membership Web Application
+
+A modern, full-featured membership web application built with Next.js, featuring user authentication, role-based access control, and a dynamic dashboard.
+
+## Features
+
+### Authentication & Authorization
+- User registration and login
+- Forgot password functionality
+- Role-based access control (Administrator, Manager, Customer)
+- Secure password handling with bcrypt
+- Email and password management
+
+### User Profiles
+- Customizable user profiles
+- Profile picture upload via Cloudinary
+- Bio management
+- Account settings management
+
+### Dashboard
+- Role-specific navigation
+- Announcement widgets
+- Quick stats display
+- Intuitive user interface
+
+### Announcements System
+- Create and manage announcements (Admin/Manager only)
+- Real-time updates
+- Rich text content support
+
+## Tech Stack
+
+- **Framework**: Next.js 15.3
+- **Authentication**: NextAuth.js
+- **Database**: PostgreSQL with Prisma ORM
+- **UI Components**: Custom components with Tailwind CSS
+- **File Upload**: Cloudinary
+- **Form Validation**: Zod
+- **State Management**: React Hooks + Context
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- Cloudinary account (for image uploads)
+
+### Environment Setup
+
+Create a `.env` file in the root directory with the following variables:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+DATABASE_URL="postgresql://your-username:your-password@localhost:5432/membership_db?schema=public"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-nextauth-secret"
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd [repository-name]
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Learn More
+3. Set up the database:
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Start the development server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication routes
+│   ├── (dashboard)/       # Dashboard routes
+│   ├── api/               # API routes
+│   └── page.tsx           # Home page
+├── components/            # Reusable components
+├── lib/                   # Utility functions and configurations
+└── types/                # TypeScript type definitions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## User Roles and Permissions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Administrator**
+   - Full system access
+   - User management
+   - Announcement management
+   - Role management
 
-## Workflow: From Idea to Implemented Feature 💡➡️💻
+2. **Manager**
+   - Announcement management
+   - Limited user management
+   - Dashboard access
 
-Here's the step-by-step process using the `.mdc` files in this repository:
+3. **Customer**
+   - Profile management
+   - View announcements
+   - Basic dashboard access
 
-### 1️⃣ Create a Product Requirement Document (PRD)
+## Deployment
 
-First, lay out the blueprint for your feature. A PRD clarifies what you're building, for whom, and why.
+### Deploying to Vercel
 
-You can create a lightweight PRD directly within Cursor:
+1. Create a Vercel account at [vercel.com](https://vercel.com) if you haven't already
+2. Install the Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
 
-1.  Ensure you have the `create-prd.mdc` file from this repository accessible.
-2.  In Cursor's Agent chat, initiate PRD creation:
+3. Login to Vercel:
+   ```bash
+   vercel login
+   ```
 
-    ```
-    Use @create-prd.mdc
-    Here's the feature I want to build: [Describe your feature in detail]
-    Reference these files to help you: [Optional: @file1.py @file2.ts]
-    ```
+4. Deploy the project:
+   ```bash
+   vercel
+   ```
 
-    _(Pro Tip: For complex PRDs, using MAX mode in Cursor is highly recommended if your budget allows for more comprehensive generation.)_
+### Setting up Database on Vercel
 
-    ![Example of initiating PRD creation](https://pbs.twimg.com/media/Go6DDlyX0AAS7JE?format=jpg&name=large)
+1. **Create a PostgreSQL Database**:
+   - Go to your Vercel project dashboard
+   - Navigate to the "Storage" tab
+   - Click "Create Database"
+   - Select "Postgres" and follow the setup wizard
+   - Vercel will provide you with a `DATABASE_URL`
 
-### 2️⃣ Generate Your Task List from the PRD
+2. **Configure Environment Variables**:
+   - In your Vercel project dashboard, go to "Settings" > "Environment Variables"
+   - Add the following variables:
+     ```
+     DATABASE_URL=your-vercel-postgres-url
+     NEXTAUTH_URL=your-deployed-app-url
+     NEXTAUTH_SECRET=your-nextauth-secret
+     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
+     CLOUDINARY_API_KEY=your-api-key
+     CLOUDINARY_API_SECRET=your-api-secret
+     ```
 
-With your PRD drafted (e.g., `MyFeature-PRD.md`), the next step is to generate a detailed, step-by-step implementation plan for your AI Developer.
+3. **Initialize Database**:
+   - After deployment, run the Prisma migrations:
+     ```bash
+     vercel env pull .env.production.local  # Pull production env vars
+     npx prisma db push --accept-data-loss  # Push schema to production DB
+     ```
 
-1.  Ensure you have `generate-tasks-from-prd.mdc` accessible.
-2.  In Cursor's Agent chat, use the PRD to create tasks:
+### Database Management
 
-    ```
-    Now take @MyFeature-PRD.md and create tasks using @generate-tasks-from-prd.mdc
-    ```
+1. **Connecting to Vercel Postgres**:
+   - Use the Vercel Postgres connection string from your dashboard
+   - For local development, add it to your `.env` file
+   - For production, Vercel automatically injects it into your environment
 
-    _(Note: Replace `@MyFeature-PRD.md` with the actual filename of the PRD you generated in step 1.)_
+2. **Database Migrations**:
+   ```bash
+   # Create a new migration
+   npx prisma migrate dev --name your_migration_name
 
-    ![Example of generating tasks from PRD](https://pbs.twimg.com/media/Go6FITbWkAA-RCT?format=jpg&name=medium)
+   # Apply migrations to production
+   npx prisma migrate deploy
+   ```
 
-### 3️⃣ Examine Your Task List
+3. **Database Backups**:
+   - Vercel Postgres automatically handles backups
+   - Access backup options in Vercel dashboard under Storage > Your Database > Backups
 
-You'll now have a well-structured task list, often with tasks and sub-tasks, ready for the AI to start working on. This provides a clear roadmap for implementation.
+4. **Monitoring**:
+   - View database metrics in Vercel dashboard
+   - Monitor connection pools, query performance, and storage usage
 
-![Example of a generated task list](https://pbs.twimg.com/media/Go6GNuOWsAEcSDm?format=jpg&name=medium)
+### Production Checklist
 
-### 4️⃣ Instruct the AI to Work Through Tasks (and Mark Completion)
+Before deploying to production, ensure:
 
-To ensure methodical progress and allow for verification, we'll use `process-task-list.mdc`. This command instructs the AI to focus on one task at a time and wait for your go-ahead before moving to the next.
+1. **Environment Variables**:
+   - All required environment variables are set in Vercel
+   - Production URLs and credentials are correctly configured
 
-1.  Create or ensure you have the `process-task-list.mdc` file accessible.
-2.  In Cursor's Agent chat, tell the AI to start with the first task (e.g., `1.1`):
+2. **Database**:
+   - Migrations are up to date
+   - Indexes are properly set up
+   - Connection pool is configured appropriately
 
-    ```
-    Please start on task 1.1 and use @process-task-list.mdc
-    ```
+3. **Security**:
+   - NEXTAUTH_SECRET is a strong, unique value
+   - API keys have appropriate permissions
+   - Rate limiting is configured
 
-    *(Important: You only need to reference `@process-task-list.mdc` for the *first* task. The instructions within it guide the AI for subsequent tasks.)*
+4. **Performance**:
+   - Images are optimized
+   - Caching is configured
+   - API routes are protected
 
-    The AI will attempt the task and then prompt you to review.
+### Troubleshooting
 
-    ![Example of starting on a task with process-task-list.mdc](https://pbs.twimg.com/media/Go6I41KWcAAAlHc?format=jpg&name=medium)
+Common deployment issues and solutions:
 
-### 5️⃣ Review, Approve, and Progress ✅
+1. **Database Connection Issues**:
+   ```bash
+   # Verify connection
+   npx prisma db push
+   
+   # Reset database if needed
+   npx prisma migrate reset
+   ```
 
-As the AI completes each task, you review the changes.
+2. **Build Failures**:
+   - Check build logs in Vercel dashboard
+   - Ensure all dependencies are properly listed in package.json
+   - Verify Node.js version compatibility
 
-- If the changes are good, simply reply with "yes" (or a similar affirmative) to instruct the AI to mark the task complete and move to the next one.
-- If changes are needed, provide feedback to the AI to correct the current task before moving on.
+3. **Environment Variables**:
+   ```bash
+   # Verify env vars locally
+   vercel env pull
+   
+   # List production env vars
+   vercel env ls
+   ```
 
-You'll see a satisfying list of completed items grow, providing a clear visual of your feature coming to life!
+## Contributing
 
-![Example of a progressing task list with completed items](https://pbs.twimg.com/media/Go6KrXZWkAA_UuX?format=jpg&name=medium)
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-While it's not always perfect, this method has proven to be a very reliable way to build out larger features with AI assistance.
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
